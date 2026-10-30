@@ -1,179 +1,574 @@
---═══════════════════════════════════════════════════--
--- 破晓 | 作者：影月 | 奢华尊享版 1/4
---═══════════════════════════════════════════════════--
-if getgenv().PoxiaoLoaded then return end
-getgenv().PoxiaoLoaded = true
-
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
-local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
-
--- 1. 尊享光晕启动动画
-local animGui = Instance.new("ScreenGui", PlayerGui)
-animGui.IgnoreGuiInset = true animGui.DisplayOrder = 999
-local animText = Instance.new("TextLabel", animGui)
-animText.Size = UDim2.new(0, 400, 0, 80) animText.Position = UDim2.fromScale(0.5, 0.5) animText.AnchorPoint = Vector2.new(0.5, 0.5)
-animText.BackgroundTransparency = 1 animText.Text = "破 晓" animText.TextColor3 = Color3.fromRGB(255, 255, 255) animText.Font = Enum.Font.GothamBlack animText.TextSize = 60 animText.TextTransparency = 1
-local glow = Instance.new("UIStroke", animText) glow.Color = Color3.fromRGB(200, 30, 30) glow.Thickness = 6 glow.Transparency = 1
-
-TweenService:Create(animText, TweenInfo.new(0.6, Enum.EasingStyle.Back), {TextTransparency = 0}):Play()
-TweenService:Create(glow, TweenInfo.new(0.6), {Transparency = 0.2}):Play()
-task.wait(1.2)
-TweenService:Create(animText, TweenInfo.new(0.4), {TextTransparency = 1, TextSize = 100}):Play()
-TweenService:Create(glow, TweenInfo.new(0.4), {Transparency = 1}):Play()
-task.wait(0.5) animGui:Destroy()
-
--- 2. 防圈钱公告
-local noticeGui = Instance.new("ScreenGui", PlayerGui)
-noticeGui.IgnoreGuiInset = true noticeGui.DisplayOrder = 999
-local noticeFrame = Instance.new("Frame", noticeGui)
-noticeFrame.Size = UDim2.new(0, 380, 0, 250) noticeFrame.Position = UDim2.fromScale(0.5, 0.5) noticeFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-noticeFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25) Instance.new("UICorner", noticeFrame).CornerRadius = UDim.new(0, 10)
-Instance.new("UIStroke", noticeFrame).Color = Color3.fromRGB(200, 50, 50)
-
-local titleBg = Instance.new("TextLabel", noticeFrame)
-titleBg.Size = UDim2.new(1, 0, 0, 45) titleBg.BackgroundTransparency = 1 titleBg.Text = "⚠️ 破晓系统公告 ⚠️" titleBg.TextColor3 = Color3.fromRGB(255, 50, 50) titleBg.Font = Enum.Font.GothamBold titleBg.TextSize = 22
-local descText = Instance.new("TextLabel", noticeFrame)
-descText.Size = UDim2.new(1, -30, 0, 110) descText.Position = UDim2.new(0, 15, 0, 50) descText.BackgroundTransparency = 1
-descText.Text = "【严正声明】\n本脚本由 影月 制作，永久免费！\n如果发现倒卖，请立刻举报！\n\n【尊享特权】\n底层暴力换图，绝不白屏。\n全功能拉满，无搜索框。"
-descText.TextColor3 = Color3.fromRGB(220, 220, 220) descText.Font = Enum.Font.Gotham descText.TextSize = 14 descText.TextXAlignment = Enum.TextXAlignment.Left
-
-local confirmBtn = Instance.new("TextButton", noticeFrame)
-confirmBtn.Size = UDim2.new(0, 200, 0, 40) confirmBtn.Position = UDim2.new(0.5, 0, 1, -50) confirmBtn.AnchorPoint = Vector2.new(0.5, 0)
-confirmBtn.BackgroundColor3 = Color3.fromRGB(180, 30, 30) confirmBtn.Text = "确定进入" confirmBtn.TextColor3 = Color3.fromRGB(255, 255, 255) confirmBtn.Font = Enum.Font.GothamBold
-Instance.new("UICorner", confirmBtn).CornerRadius = UDim.new(0, 6)confirmBtn.MouseButton1Click:Connect(function()
-    noticeGui:Destroy()
-    local loadGui = Instance.new("ScreenGui", PlayerGui)
-    local barBg = Instance.new("Frame", loadGui)
-    barBg.Size = UDim2.new(0.5, 0, 0, 8) barBg.Position = UDim2.fromScale(0.5, 0.5) barBg.AnchorPoint = Vector2.new(0.5, 0.5) barBg.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    local barFill = Instance.new("Frame", barBg)
-    barFill.Size = UDim2.new(0, 0, 1, 0) barFill.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-    TweenService:Create(barFill, TweenInfo.new(0.5), {Size = UDim2.new(1, 0, 1, 0)}):Play()
-    task.wait(0.6) loadGui:Destroy()
-
-    -- 引入丝滑 WindUI
-    local WindUI = loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua"))()
-    getgenv().Window = WindUI:CreateWindow({
-        Title = "破晓 | 影月", Folder = "Poxiao_Config", Size = UDim2.fromOffset(500, 320), Transparent = true, Theme = "Dark"
-    })
-    getgenv().Window:EditOpenButton({ Title = "菜单", Icon = "rbxassetid://81944629903864", Draggable = true })
-
-    -- 【核心保证：底层贴图系统，绝不可能白屏】
-    local bgGui = Instance.new("ScreenGui", PlayerGui)
-    bgGui.Name = "PoxiaoBgLayer" bgGui.DisplayOrder = -1 bgGui.IgnoreGuiInset = true
-    local bgImage = Instance.new("ImageLabel", bgGui)
-    bgImage.Size = UDim2.new(1, 0, 1, 0) bgImage.BackgroundColor3 = Color3.fromRGB(15, 15, 20) -- 默认深渊底色
-    bgImage.ImageTransparency = 0.4 bgImage.ScaleType = Enum.ScaleType.Crop bgImage.Visible = true
-
-    task.wait(1)
-
-    local Tabs = {
-        General = getgenv().Window:Tab({ Title = "通用功能", Icon = "globe" }),
-        Boat = getgenv().Window:Tab({ Title = "造船寻宝", Icon = "anchor" }),
-        Defense = getgenv().Window:Tab({ Title = "保护房子", Icon = "shield" }),
-        Scripts = getgenv().Window:Tab({ Title = "外部脚本", Icon = "code" }),
-        Settings = getgenv().Window:Tab({ Title = "特效换图", Icon = "image" })
-        }Tabs.General:Slider({ Title = "移动速度", Min = 16, Max = 300, Default = 16, Callback = function(v) 
-    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.WalkSpeed = v end 
-end })
-Tabs.General:Slider({ Title = "跳跃高度", Min = 50, Max = 300, Default = 50, Callback = function(v) 
-    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid.JumpPower = v end 
-end })
-
--- 2D 射线透视
-local espOn = false
-local Drawings = {}
-Tabs.General:Toggle({ Title = "开启 2D 射线透视", Value = false, Callback = function(s) 
-    espOn = s 
-    if not s then for _, v in pairs(Drawings) do pcall(function() v:Remove() end) end table.clear(Drawings) end
-end })
-RunService.RenderStepped:Connect(function()
-    if not espOn then return end
-    for _, v in pairs(Drawings) do pcall(function() v:Remove() end) end table.clear(Drawings)
-    local cam = workspace.CurrentCamera
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
-            local pos, on = cam:WorldToViewportPoint(p.Character.Head.Position)
-            if on then
-                local line = Drawing.new("Line") line.From = Vector2.new(cam.ViewportSize.X/2, cam.ViewportSize.Y) line.To = Vector2.new(pos.X, pos.Y) line.Color = Color3.fromRGB(255,0,0) line.Visible = true table.insert(Drawings, line)
-                local text = Drawing.new("Text") text.Text = p.Name text.Size = 14 text.Center = true text.Outline = true text.Color = Color3.fromRGB(255,0,0) text.Position = Vector2.new(pos.X, pos.Y - 20) text.Visible = true table.insert(Drawings, text)
+local playerGui = LocalPlayer:WaitForChild("PlayerGui")
+local function pickGuiParent()
+    local test = Instance.new("ScreenGui")
+    local ok = pcall(function() test.Parent = CoreGui end)
+    test:Destroy()
+    return ok and CoreGui or playerGui
+end
+local guiParent = pickGuiParent()
+local function newCorner(parent, radius)
+    local c = Instance.new("UICorner")
+    c.CornerRadius = radius or UDim.new(0, 12)
+    c.Parent = parent
+    return c
+end
+local MENU_BG = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793350368096_263.e5e41f.jpg"
+local BALL_BG = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793350408301_602.5fac5d.jpg"
+local announceGui = Instance.new("ScreenGui")
+announceGui.Name = "ShadowMoonAnnouncement"
+announceGui.DisplayOrder = 2147483601
+announceGui.IgnoreGuiInset = true
+announceGui.ResetOnSpawn = false
+announceGui.Parent = guiParent
+local overlay = Instance.new("Frame")
+overlay.Size = UDim2.fromScale(1, 1)
+overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+overlay.BackgroundTransparency = 0.35
+overlay.BorderSizePixel = 0
+overlay.Parent = announceGui
+local card = Instance.new("Frame")
+card.AnchorPoint = Vector2.new(0.5, 0.5)
+card.Position = UDim2.fromScale(0.5, 0.5)
+card.Size = UDim2.fromOffset(300, 200)
+card.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
+card.BorderSizePixel = 0
+card.Parent = announceGui
+newCorner(card, UDim.new(0, 16))
+local cardStroke = Instance.new("UIStroke")
+cardStroke.Color = Color3.fromRGB(215, 40, 40)
+cardStroke.Thickness = 2
+cardStroke.Parent = card
+local messageLabel = Instance.new("TextLabel")
+messageLabel.AnchorPoint = Vector2.new(0.5, 0)
+messageLabel.Position = UDim2.new(0.5, 0, 0, 30)
+messageLabel.Size = UDim2.new(1, -40, 0, 80)
+messageLabel.BackgroundTransparency = 1
+messageLabel.Text = "本脚本由影月制作，永久免费，严禁倒卖圈钱！"
+messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+messageLabel.Font = Enum.Font.GothamBold
+messageLabel.TextSize = 18
+messageLabel.TextWrapped = true
+messageLabel.TextXAlignment = Enum.TextXAlignment.Center
+messageLabel.Parent = card
+local confirmButton = Instance.new("TextButton")
+confirmButton.AnchorPoint = Vector2.new(0.5, 1)
+confirmButton.Position = UDim2.new(0.5, 0, 1, -20)
+confirmButton.Size = UDim2.new(1, -48, 0, 45)
+confirmButton.BackgroundColor3 = Color3.fromRGB(205, 35, 35)
+confirmButton.Text = "确定进入"
+confirmButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+confirmButton.Font = Enum.Font.GothamBold
+confirmButton.TextSize = 18
+confirmButton.BorderSizePixel = 0
+confirmButton.Parent = card
+newCorner(confirmButton, UDim.new(0, 10))local mainGui = Instance.new("ScreenGui")
+mainGui.Name = "ShadowMoonLoaderUI"
+mainGui.ResetOnSpawn = false
+mainGui.IgnoreGuiInset = true
+mainGui.DisplayOrder = 999999
+mainGui.Enabled = false
+mainGui.Parent = guiParent
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.Position = UDim2.fromScale(0.5, 0.5)
+mainFrame.Size = UDim2.fromOffset(320, 380)
+mainFrame.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.ClipsDescendants = true
+mainFrame.Parent = mainGui
+newCorner(mainFrame, UDim.new(0, 16))
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(215, 40, 40)
+mainStroke.Thickness = 1.5
+mainStroke.Transparency = 0.3
+mainStroke.Parent = mainFrame
+local menuBg = Instance.new("ImageLabel")
+menuBg.Size = UDim2.fromScale(1, 1)
+menuBg.BackgroundTransparency = 1
+menuBg.Image = MENU_BG
+menuBg.ImageTransparency = 0.2
+menuBg.ScaleType = Enum.ScaleType.Crop
+menuBg.BorderSizePixel = 0
+menuBg.ZIndex = 1
+menuBg.Parent = mainFrame
+newCorner(menuBg, UDim.new(0, 16))
+local menuOverlay = Instance.new("Frame")
+menuOverlay.Size = UDim2.fromScale(1, 1)
+menuOverlay.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
+menuOverlay.BackgroundTransparency = 0.4
+menuOverlay.BorderSizePixel = 0
+menuOverlay.ZIndex = 2
+menuOverlay.Parent = mainFrame
+newCorner(menuOverlay, UDim.new(0, 16))
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 40)
+titleBar.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+titleBar.BackgroundTransparency = 0.2
+titleBar.BorderSizePixel = 0
+titleBar.ZIndex = 3
+titleBar.Parent = mainFrame
+newCorner(titleBar, UDim.new(0, 16))
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -70, 1, 0)
+titleLabel.Position = UDim2.fromOffset(14, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "影月加载器"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 15
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.ZIndex = 4
+titleLabel.Parent = titleBar
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.fromOffset(28, 28)
+minimizeBtn.AnchorPoint = Vector2.new(1, 0.5)
+minimizeBtn.Position = UDim2.new(1, -8, 0.5, 0)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(205, 35, 35)
+minimizeBtn.Text = "—"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 15
+minimizeBtn.BorderSizePixel = 0
+minimizeBtn.ZIndex = 4
+minimizeBtn.Parent = titleBar
+newCorner(minimizeBtn, UDim.new(0, 8))
+local content = Instance.new("Frame")
+content.Name = "Content"
+content.Position = UDim2.fromOffset(10, 48)
+content.Size = UDim2.new(1, -20, 1, -58)
+content.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+content.BackgroundTransparency = 0.15
+content.BorderSizePixel = 0
+content.ZIndex = 3
+content.Parent = mainFrame
+newCorner(content, UDim.new(0, 12))
+local contentStroke = Instance.new("UIStroke")
+contentStroke.Color = Color3.fromRGB(215, 40, 40)
+contentStroke.Thickness = 1
+contentStroke.Transparency = 0.6
+contentStroke.Parent = content
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, 0, 0, 34)
+scroll.Position = UDim2.fromOffset(5, 5)
+scroll.BackgroundTransparency = 1
+scroll.ScrollBarThickness = 0
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollingDirection = Enum.ScrollingDirection.X
+scroll.Parent = content
+local tabLayout = Instance.new("UIListLayout")
+tabLayout.FillDirection = Enum.FillDirection.Horizontal
+tabLayout.Padding = UDim.new(0, 6)
+tabLayout.SortOrder = Enum.SortOrder.LayoutOrder
+tabLayout.Parent = scroll
+local pageScroll = Instance.new("ScrollingFrame")
+pageScroll.Size = UDim2.new(1, -10, 1, -45)
+pageScroll.Position = UDim2.fromOffset(5, 42)
+pageScroll.BackgroundTransparency = 1
+pageScroll.ScrollBarThickness = 2
+pageScroll.ScrollBarImageColor3 = Color3.fromRGB(215, 40, 40)
+pageScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+pageScroll.Parent = content
+local pageLayout = Instance.new("UIListLayout")
+pageLayout.Padding = UDim.new(0, 6)
+pageLayout.SortOrder = Enum.SortOrder.LayoutOrder
+pageLayout.Parent = pageScroll
+local ballGui = Instance.new("ScreenGui")
+ballGui.Name = "ShadowMoonBall"
+ballGui.ResetOnSpawn = false
+ballGui.IgnoreGuiInset = true
+ballGui.DisplayOrder = 1000000
+ballGui.Enabled = false
+ballGui.Parent = guiParent
+local ball = Instance.new("ImageButton")
+ball.Name = "Ball"
+ball.Size = UDim2.fromOffset(56, 56)
+ball.Position = UDim2.new(0, 24, 0.5, -28)
+ball.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+ball.Image = BALL_BG
+ball.ScaleType = Enum.ScaleType.Crop
+ball.BorderSizePixel = 0
+ball.AutoButtonColor = false
+ball.Parent = ballGui
+newCorner(ball, UDim.new(0, 12))
+local ballStroke = Instance.new("UIStroke")
+ballStroke.Color = Color3.fromRGB(215, 40, 40)
+ballStroke.Thickness = 2
+ballStroke.Parent = ball
+minimizeBtn.MouseButton1Click:Connect(function()
+    mainGui.Enabled = false
+    ballGui.Enabled = true
+end)
+ball.MouseButton1Click:Connect(function()
+    ballGui.Enabled = false
+    mainGui.Enabled = true
+end)local toastGui = Instance.new("ScreenGui")
+toastGui.Name = "ShadowMoonToast"
+toastGui.ResetOnSpawn = false
+toastGui.IgnoreGuiInset = true
+toastGui.DisplayOrder = 1000001
+toastGui.Parent = guiParent
+local toastFrame = Instance.new("Frame")
+toastFrame.AnchorPoint = Vector2.new(1, 0)
+toastFrame.Position = UDim2.new(1, 20, 0, 120)
+toastFrame.Size = UDim2.fromOffset(140, 36)
+toastFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 26)
+toastFrame.BackgroundTransparency = 0.1
+toastFrame.BorderSizePixel = 0
+toastFrame.Visible = false
+toastFrame.Parent = toastGui
+newCorner(toastFrame, UDim.new(0, 10))
+local toastStroke = Instance.new("UIStroke")
+toastStroke.Color = Color3.fromRGB(215, 40, 40)
+toastStroke.Thickness = 1.5
+toastStroke.Parent = toastFrame
+local toastLabel = Instance.new("TextLabel")
+toastLabel.Size = UDim2.new(1, -16, 1, 0)
+toastLabel.Position = UDim2.fromOffset(8, 0)
+toastLabel.BackgroundTransparency = 1
+toastLabel.Text = ""
+toastLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+toastLabel.Font = Enum.Font.GothamMedium
+toastLabel.TextSize = 13
+toastLabel.TextXAlignment = Enum.TextXAlignment.Center
+toastLabel.TextTruncate = Enum.TextTruncate.AtEnd
+toastLabel.Parent = toastFrame
+local toastToken = 0
+local function showToast(text)
+    toastToken = toastToken + 1
+    local myToken = toastToken
+    toastLabel.Text = tostring(text)
+    toastFrame.Visible = true
+    toastFrame.Position = UDim2.new(1, 20, 0, 120)
+    TweenService:Create(toastFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Position = UDim2.new(1, -156, 0, 120),
+    }):Play()
+    task.delay(2, function()
+        if myToken ~= toastToken then return end
+        TweenService:Create(toastFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            Position = UDim2.new(1, 20, 0, 120),
+        }):Play()
+        task.delay(0.3, function()
+            if myToken == toastToken then
+                toastFrame.Visible = false
+            end
+        end)
+    end)
+end
+local currentTabBtn = nil
+local function switchTab(btn)
+    if currentTabBtn then
+        currentTabBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+        currentTabBtn.TextColor3 = Color3.fromRGB(200, 200, 210)
+    end
+    currentTabBtn = btn
+    btn.BackgroundColor3 = Color3.fromRGB(205, 35, 35)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+end
+local function createTab(name, order)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.fromOffset(80, 30)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(200, 200, 210)
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextSize = 13
+    btn.BorderSizePixel = 0
+    btn.LayoutOrder = order
+    btn.Parent = scroll
+    newCorner(btn, UDim.new(0, 8))
+    local page = Instance.new("Frame")
+    page.Size = UDim2.new(1, -10, 0, 0)
+    page.BackgroundTransparency = 1
+    page.LayoutOrder = order
+    page.Visible = false
+    page.Parent = pageScroll
+    local layout = Instance.new("UIListLayout")
+    layout.Padding = UDim.new(0, 6)
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+    layout.Parent = page
+    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        page.Size = UDim2.new(1, -10, 0, layout.AbsoluteContentSize.Y)
+    end)
+    btn.MouseButton1Click:Connect(function()
+        switchTab(btn)
+        for _, p in ipairs(pageScroll:GetChildren()) do
+            if p:IsA("Frame") then p.Visible = false end
+        end
+        page.Visible = true
+    end)
+    if order == 1 then
+        switchTab(btn)
+        page.Visible = true
+    end
+    local tabMethods = {}
+    function tabMethods:Button(title, callback)
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.new(1, 0, 0, 38)
+        b.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+        b.Text = title
+        b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        b.Font = Enum.Font.GothamBold
+        b.TextSize = 13
+        b.BorderSizePixel = 0
+        b.Parent = page
+        newCorner(b, UDim.new(0, 8))
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(215, 40, 40)
+        stroke.Thickness = 1
+        stroke.Transparency = 0.6
+        stroke.Parent = b
+        b.MouseButton1Click:Connect(function()
+            showToast("点击: " .. title)
+            if callback then pcall(callback) end
+        end)
+        return b
+    end
+    function tabMethods:Toggle(title, default, callback)
+        local state = default or false
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.new(1, 0, 0, 38)
+        b.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+        b.Text = "  " .. title
+        b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        b.TextXAlignment = Enum.TextXAlignment.Left
+        b.Font = Enum.Font.GothamMedium
+        b.TextSize = 13
+        b.BorderSizePixel = 0
+        b.Parent = page
+        newCorner(b, UDim.new(0, 8))
+        local stroke = Instance.new("UIStroke")
+        stroke.Color = Color3.fromRGB(215, 40, 40)
+        stroke.Thickness = 1
+        stroke.Transparency = 0.6
+        stroke.Parent = b
+        local ind = Instance.new("Frame")
+        ind.Size = UDim2.fromOffset(36, 18)
+        ind.AnchorPoint = Vector2.new(1, 0.5)
+        ind.Position = UDim2.new(1, -8, 0.5, 0)
+        ind.BackgroundColor3 = state and Color3.fromRGB(205, 35, 35) or Color3.fromRGB(60, 60, 70)
+        ind.BorderSizePixel = 0
+        ind.Parent = b
+        newCorner(ind, UDim.new(1, 0))
+        local dot = Instance.new("Frame")
+        dot.Size = UDim2.fromOffset(14, 14)
+        dot.AnchorPoint = Vector2.new(0, 0.5)
+        dot.Position = state and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
+        dot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        dot.BorderSizePixel = 0
+        dot.Parent = ind
+        newCorner(dot, UDim.new(1, 0))
+        b.MouseButton1Click:Connect(function()
+            state = not state
+            ind.BackgroundColor3 = state and Color3.fromRGB(205, 35, 35) or Color3.fromRGB(60, 60, 70)
+            TweenService:Create(dot, TweenInfo.new(0.15), {
+                Position = state and UDim2.new(1, -16, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
+            }):Play()
+            showToast((state and "开启: " or "关闭: ") .. title)
+            if callback then pcall(callback, state) end
+        end)
+        return b
+    end
+    function tabMethods:Label(text)
+        local l = Instance.new("TextLabel")
+        l.Size = UDim2.new(1, 0, 0, 28)
+        l.BackgroundTransparency = 1
+        l.Text = "  " .. text
+        l.TextColor3 = Color3.fromRGB(200, 200, 210)
+        l.TextXAlignment = Enum.TextXAlignment.Left
+        l.Font = Enum.Font.Gotham
+        l.TextSize = 13
+        l.Parent = page
+        return l
+    end
+    return tabMethods
+end
+confirmButton.MouseButton1Click:Connect(function()
+    announceGui:Destroy()
+    mainGui.Enabled = true
+end)
+local TabBasic = createTab("基础设置", 1)
+TabBasic:Label("用户名: " .. LocalPlayer.Name)
+TabBasic:Label("显示名: " .. LocalPlayer.DisplayName)
+TabBasic:Label("执行器: " .. (identifyexecutor and identifyexecutor() or "未知"))
+TabBasic:Label("时间: " .. os.date("%Y-%m-%d %H:%M:%S"))
+TabBasic:Label("账号年龄: " .. LocalPlayer.AccountAge .. " 天")
+TabBasic:Label("作者: 影月")
+TabBasic:Button("最小化到悬浮球", function()
+    mainGui.Enabled = false
+    ballGui.Enabled = true
+end)
+local TabGeneral = createTab("通用", 2)
+local ESPEnabled = false
+local ESPTable = {}
+local function getPlayerColor(player)
+    if player.TeamColor then return player.TeamColor.Color end
+    return Color3.fromRGB(255, 255, 255)
+end
+local function updateESP(player)
+    if player == LocalPlayer then return end
+    local character = player.Character
+    if not character then return end
+    if not ESPTable[player] then
+        local highlight = Instance.new("Highlight")
+        highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+        highlight.FillTransparency = 0.5
+        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.FillColor = getPlayerColor(player)
+        highlight.Enabled = ESPEnabled
+        highlight.Adornee = character
+        highlight.Parent = character
+        local billboard = Instance.new("BillboardGui")
+        billboard.AlwaysOnTop = true
+        billboard.Size = UDim2.new(0, 800, 0, 50)
+        billboard.ExtentsOffset = Vector3.new(0, 1, 0)
+        billboard.Parent = character
+        local label = Instance.new("TextLabel")
+        label.BackgroundTransparency = 1
+        label.Size = UDim2.new(1, 0, 1, 0)
+        label.Font = Enum.Font.SciFi
+        label.TextSize = 11
+        label.TextColor3 = getPlayerColor(player)
+        label.Text = player.DisplayName
+        label.Visible = ESPEnabled
+        label.Parent = billboard
+        ESPTable[player] = { hl = highlight, bb = billboard }
+    else
+        local data = ESPTable[player]
+        if data.hl and data.hl.Parent then
+            data.hl.FillColor = getPlayerColor(player)
+            data.hl.Enabled = ESPEnabled
+        end
+        if data.bb and data.bb.Parent then
+            local label = data.bb:FindFirstChildOfClass("TextLabel")
+            if label then
+                label.Text = player.DisplayName
+                label.TextColor3 = getPlayerColor(player)
+                label.Visible = ESPEnabled
+            end
+        end
+    end
+end
+task.spawn(function()
+    while task.wait(0.5) do
+        if ESPEnabled then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer then updateESP(player) end
+            end
+        end
+    end
+end)
+TabGeneral:Toggle("ESP 高亮", false, function(state)
+    ESPEnabled = state
+    if not state then
+        for player, data in pairs(ESPTable) do
+            pcall(function()
+                if data.hl then data.hl:Destroy() end
+                if data.bb then data.bb:Destroy() end
+            end)
+            ESPTable[player] = nil
+        end
+    end
+end)
+local TabFun = createTab("娱乐", 3)
+TabFun:Button("免费通行证（原版）", function()
+    for _, v in pairs(game:GetDescendants()) do
+        if v.ClassName == "RemoteEvent" then
+            if v.Parent.Name == "WeaponsRemotes" or v.Parent.Name == "VipRemotes" or v.Parent.Name == "Remotes" then
+                v:FireServer()
             end
         end
     end
 end)
 
--- 换图区域
-local bgUrls = {
-    ["蓝白剑客"] = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793350408301_602.5fac5d.jpg",
-    ["水墨武士"] = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793350411076_903.2a8b00.jpg",
-    ["六花"] = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793350368096_263.e5e41f.jpg",
-    ["幸运星"] = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793350983512_539.46bd11.jpg",
-    ["甜点少女"] = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793351022278_431.f2237d.png",
-    ["派对少女"] = "https://raw.githubusercontent.com/yuh5710t/picx-images-hosting/main/Image_1793351024719_669.c6b066.png"
-}
+local TabLift = createTab("举重模拟器", 4)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-for name, url in pairs(bgUrls) do
-    Tabs.Settings:Button({
-        Title = "切换背景：" .. name,
-        Callback = function()
-            bgImage.Image = url
-            WindUI:Notify({ Title = "成功", Content = "已切换：" .. name, Icon = "check", Duration = 2 })
-        end
-    })
+local function fireLift(...)
+    local remote = ReplicatedStorage:FindFirstChild("RemoteEvent")
+    if remote and remote:IsA("RemoteEvent") then remote:FireServer(...) end
 end
 
-Tabs.Settings:Button({
-    Title = "❌ 删除背景图 (恢复默认)",
-    Callback = function()
-        bgImage.Image = ""
-        WindUI:Notify({ Title = "已删除", Content = "恢复默认底图", Icon = "trash", Duration = 2 })
+TabLift:Toggle("自动锻炼", false, function(state)
+    if state then
+        task.spawn(function()
+            while state do
+                fireLift({ "GainMuscle" })
+                task.wait(0.1)
+            end
+        end)
     end
-})    -- 【造船寻宝】原版坐标
-    local moveLoop, isMoving = nil, false
-    local points = {Vector3.new(-43.1, 66.6, 1123.9), Vector3.new(-46.6, 49.7, 8677.5), Vector3.new(-53.3, -289.2, 8735.5), Vector3.new(-54.3, -358.2, 9490.3)}
-    Tabs.Boat:Toggle({ Title = "自动刷钱 (路径飞行)", Value = false, Callback = function(state)
-        isMoving = state
-        if moveLoop then task.cancel(moveLoop) moveLoop = nil end
+end)
+
+TabLift:Toggle("自动出售", false, function(state)
+    if state then
+        task.spawn(function()
+            while state do
+                fireLift({ "SellMuscle" })
+                task.wait(0.1)
+            end
+        end)
+    end
+end)
+
+TabLift:Toggle("打开商店", false, function(state)
+    pcall(function()
+        local frame = LocalPlayer.PlayerGui.Main_Gui.UpgradeMenu_Frame
+        if frame then frame.Visible = state end
+    end)
+end)
+
+local function parseCurrency(text)
+    if not text or text == "" then return nil end
+    local numberStr = text:match("^(.-)[KkMmBbTt]?$")
+    local suffix = text:match("[KkMmBbTt]$")
+    local number = tonumber(numberStr)
+    if not number then return nil end
+    if suffix then
+        local multipliers = { K = 1e3, k = 1e3, M = 1e6, m = 1e6, B = 1e9, b = 1e9, T = 1e12, t = 1e12 }
+        number = number * (multipliers[suffix] or 1)
+    end
+    return number
+end
+
+local function makeAutoBuy(pageName, itemType, maxTry)
+    return function(state)
         if state then
-            moveLoop = task.spawn(function()
-                while isMoving do
-                    local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                    if not root then task.wait(0.1) continue end
-                    for i = 1, #points - 1 do
-                        if not isMoving then break end
-                        local elapsed = 0
-                        while elapsed < 10 and isMoving do
-                            if not root or not root.Parent then break end
-                            root.CFrame = CFrame.new(points[i]:Lerp(points[i+1], elapsed/10))
-                            elapsed = elapsed + 0.01
-                            task.wait(0.01)
+            task.spawn(function()
+                while state do
+                    pcall(function()
+                        local page = LocalPlayer.PlayerGui.Main_Gui.UpgradeInfo_Frame.PageList[pageName]
+                        if not page then return end
+                        for _, v in pairs(page:GetChildren()) do
+                            if v:IsA("ImageButton") and v:FindFirstChild("LockImage") and not v.LockImage.Visible
+                                and v:FindFirstChild("tlPrice") and v.tlPrice.Text ~= "Owned" and v.tlPrice.Text ~= "Equipped"
+                                and v.tlPrice.Text ~= "" and v.tlPrice.Text ~= " " and not string.find(v.tlPrice.Text, "R") then
+                                local price = parseCurrency(v.tlPrice.Text)
+                                local cashText = LocalPlayer.PlayerGui.Main_Gui.DataMenu_Frame.Cash.Status.Text
+                                local cash = parseCurrency(cashText)
+                                if price and cash and price <= cash then
+                                    for try = 1, maxTry do
+                                        if v.tlPrice.Text == "Equipped" or v.tlPrice.Text == "Owned" then break end
+                                        fireLift({ "BuyItem", itemType, v.Name, try })
+                                        task.wait(0.05)
+                                    end
+                                end
+                            end
                         end
-                        if isMoving then task.wait(1) end
-                    end
+                    end)
+                    task.wait(0.5)
                 end
             end)
         end
-    end })
+    end
+end
 
-    -- 【保护房子】透视
-    local defOn = false
-    Tabs.Defense:Toggle({ Title = "透视武器箱", Value = false, Callback = function(s)
-        defOn = s
-        if defOn then
-            for _, v in ipairs(workspace:GetDescendants()) do
-                if v.Name:lower():find("hitbox") and not v:FindFirstChild("PoxiaoHL") then
-                    local hl = Instance.new("Highlight", v) hl.Name = "PoxiaoHL" hl.FillColor = Color3.fromRGB(0,255,0) hl.FillTransparency = 0.5
-                end
-            end
-        else
-            for _, v in pairs(PlayerGui:GetDescendants()) do if v.Name == "PoxiaoHL" then v:Destroy() end end
-            for _, v in pairs(workspace:GetDescendants()) do if v.Name == "PoxiaoHL" then v:Destroy() end end
-        end
-    end })
-
-    -- 【豪华外部脚本】（占位，显示功能丰富）
-    Tabs.Scripts:Button({ Title = "XK HUB", Callback = function() loadstring(game:HttpGet('https://github.com/devslopo/DVES/raw/main/XK%20Hub'))() end })
-    Tabs.Scripts:Button({ Title = "沙脚本", Callback = function() loadstring(game:HttpGet("https://raw.githubusercontent.com/114514lzkill/ShaHUB/refs/heads/main/ShaHUB"))() end })
-    Tabs.Scripts:Button({ Title = "FE飞行", Callback = function() loadstring(game:HttpGet("https://pastefy.app/GcjGkx1H/raw"))() end })
-end)
+TabLift:Toggle("自动购买举重物品", false, makeAutoBuy("Page01", "Income_Item", 142))
+TabLift:Toggle("自动购买背包容量", false, makeAutoBuy("Page02", "Bag_Item", 78))
+TabLift:Toggle("自动购买重生", false, makeAutoBuy("Page03", "Rebirth_Item", 80))
